@@ -1,0 +1,38 @@
+#server:
+#  port: 8761
+
+
+
+server:
+  port: 8081
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    fetchRegistry: true
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes[0]:
+          id: product-service
+          uri: lb://PRODUCT-SERVICE/
+          predicates[0]: Path=/product/**
+      routes[1]:
+        id: redis-service
+        uri: lb://REDIS-SERVICE/
+        predicates[0]: Path=/redis-cache/**
+      routes[2]:
+        id: customer-service
+        uri: lb://CUSTOMER-SERVICE/
+        predicates[0]: Path=/customer/**
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
